@@ -1,0 +1,129 @@
+﻿@model IEnumerable<NewHelpDesk.Models.Request>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container">
+    <div></div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Ид</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Статус</th>
+                <th>Приоритет</th>
+                <th class="text-center">Пользователь</th>
+                <th class="text-center">Исполнитель</th>
+                <th class="text-center"></th>
+                <th class="text-center"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.Id</td>
+                    <td>
+                        @Html.ActionLink(@request.Name, "Detail", "Request", new { id = request.Id }, new { @class = "openDialog", data_dialog_id = "infoDialog", data_dialog_title = "Описание" })
+                    </td>
+                    <td>@request.Description</td>
+                    <td>@request.Status.Name</td>
+                    <td>@request.Priority.Name</td>
+                    <td class="text-center">
+                        <a href="/Request/ExecutorDetail/@request.ApplicationUserId" class="openDialog" data-dialog-title="Информация о пользователе">
+                            <span class="glyphicon glyphicon-user" style="color:green"></span>
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="/Request/ExecutorDetail/@request.ExecutorId" class="openDialog" data-dialog-title="Информация о исполнителе">
+                            <span class="glyphicon glyphicon-user" style="color:red"></span>
+                        </a>
+                    </td>
+                    <td>
+                        @if ((ViewBag.Executors as SelectList).Count() > 0)
+                        {
+                            using (Html.BeginForm())
+                            {
+                            <td>
+                                @Html.Hidden("requestId", request.Id)
+                                @Html.DropDownList("executorId", ViewBag.Executors as SelectList, new { @class = "form-control" })
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-ok-circle"></span>Назначить
+                                </button>
+                            </td>
+                            }
+                        }
+                        else
+                        {
+                            <td>
+                                В БД отсутствуют исполнители
+                            </td>
+                        }
+                    </td>
+                    @*<td class="text-center">
+                        <a id="deleteBtn" href="javascript: void(0);" onclick="deleteBook(@request.Id,$(this));">
+                            <span class="glyphicon glyphicon-trash" style="color:green"></span>
+                        </a>
+                   </td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $.ajaxSetup({ cache: false });
+
+        $(".openDialog").on("click", function (e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .addClass("dialog")
+                .attr("id", $(this)
+                .attr("data-dialog-id"))
+                .appendTo("body")
+                .dialog({
+                    title: $(this).attr("data-dialog-title"),
+                    //close: function () { $(this).remove() },
+                    modal: true
+                })
+                .load(this.href);
+        });
+
+        $(".close").on("click", function (e) {
+            e.preventDefault();
+            $(this).closest(".dialog").dialog("close");
+        });
+    });
+    function deleteBook(requestId, thisObj) {
+        var parent = thisObj.closest('tr');;
+        $('<div class="dialog" style="color:red; padding:10px; line-height: 20px;"/>')
+        .html("Вы действительно хотите удалить проект?")
+        .dialog({
+            modal: true,
+            width: 500,
+            buttons: {
+                "Подтвердить": function () {
+                    var params = { requestId: requestId };
+                    $.ajax({
+                        url: '@Url.Action("DeleteRequest", "Request")',
+                        type: "POST",
+                        data: JSON.stringify(params),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            parent.remove();
+                        },
+                    });
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
+</script>

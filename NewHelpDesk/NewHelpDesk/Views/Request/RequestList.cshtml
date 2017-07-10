@@ -1,0 +1,103 @@
+﻿@model IEnumerable<NewHelpDesk.Models.Request>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RequestList</title>
+</head>
+<body>
+    @*<p>
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Comment)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.StatusId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PriorityId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExecutorId)
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.Comment)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.Status.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td class="text-center">
+                <a href="/Request/ExecutorDetail/@item.ApplicationUserId" class="openDialog" data-dialog-title="Информация о пользователе">
+                    <span class="glyphicon glyphicon-user" style="color:green"></span>
+                </a>
+            </td>
+            <td class="text-center">
+                <a href="/Request/ExecutorDetail/@item.ExecutorId" class="openDialog" data-dialog-title="Информация о исполнителе">
+                    <span class="glyphicon glyphicon-user" style="color:red"></span>
+                </a>
+            </td>
+        </tr>
+    }    
+    </table>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+
+        $.ajaxSetup({ cache: false });
+
+        $(".openDialog").on("click", function (e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .addClass("dialog")
+                .attr("id", $(this)
+                .attr("data-dialog-id"))
+                .appendTo("body")
+                .dialog({
+                    title: $(this).attr("data-dialog-title"),
+                    //close: function () { $(this).remove() },
+                    modal: true
+                })
+                .load(this.href);
+        });
+
+        $(".close").on("click", function (e) {
+            e.preventDefault();
+            $(this).closest(".dialog").dialog("close");
+        });
+    });
+</script>

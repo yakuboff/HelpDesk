@@ -1,0 +1,67 @@
+﻿@model IEnumerable<NewHelpDesk.Models.Request>
+@{
+    ViewBag.Title = "Стартовая";
+}
+
+<div class="container">
+    <div class="jumbotron">
+        <h1>Вас Приветствует HelpDesk</h1>
+        <p>
+
+        </p>
+    </div>
+</div>
+@*<script>
+    $(document).ready(function () {
+
+        $.ajaxSetup({ cache: false });
+
+        $(".openDialog").on("click", function (e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .addClass("dialog")
+                .attr("id", $(this)
+                .attr("data-dialog-id"))
+                .appendTo("body")
+                .dialog({
+                    title: $(this).attr("data-dialog-title"),
+                    //close: function () { $(this).remove() },
+                    modal: true
+                })
+                .load(this.href);
+        });
+
+        $(".close").on("click", function (e) {
+            e.preventDefault();
+            $(this).closest(".dialog").dialog("close");
+        });
+    });
+    function deleteBook(requestId, thisObj) {
+        var parent = thisObj.closest('tr');;
+        $('<div class="dialog" style="color:red; padding:10px; line-height: 20px;"/>')
+        .html("Вы действительно хотите удалить проект?")
+        .dialog({
+            modal: true,
+            width: 500,
+            buttons: {
+                "Подтвердить": function () {
+                    var params = { requestId: requestId };
+                    $.ajax({
+                        url: '@Url.Action("DeleteRequest", "Request")',
+                        type: "POST",
+                        data: JSON.stringify(params),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            parent.remove();
+                        },
+                    });
+                    $(this).dialog("close");
+                },
+                "Отмена": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
+</script>*@
